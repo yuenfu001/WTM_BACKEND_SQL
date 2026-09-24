@@ -1,4 +1,4 @@
-# MySQL Query Reference & Command Summary
+# SESSION 1: MySQL Query Reference & Command Summary
 
 A quick-reference guide summarizing the valid SQL commands and queries executed during the terminal sessions, categorized by their administrative, structural, or data manipulation functions.
 
@@ -61,7 +61,7 @@ A quick-reference guide summarizing the valid SQL commands and queries executed 
 | :--- | :--- |
 | `DELETE FROM userprofile WHERE address IS NULL;` | Deletes specific rows from `userprofile` where the `address` value is `NULL`. |
 
-# MySQL Terminal Session Log
+# SESSION 2: MySQL Terminal Session Log
 
 **Environment:** MySQL Server 8.4.9 (Win64)
 
