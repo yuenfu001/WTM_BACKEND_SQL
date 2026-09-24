@@ -119,7 +119,7 @@ mysql> SHOW TABLES;
 
 ```
 
-### Database Initialization (`wtm_backend`)
+### Database Initialization (`wtm_backend`) For Your Back-end Framework
 
 ```
 mysql> CREATE DATABASE wtm_backend CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
