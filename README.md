@@ -60,3 +60,202 @@ A quick-reference guide summarizing the valid SQL commands and queries executed 
 | Command / Query | Description |
 | :--- | :--- |
 | `DELETE FROM userprofile WHERE address IS NULL;` | Deletes specific rows from `userprofile` where the `address` value is `NULL`. |
+
+# MySQL Terminal Session Log
+
+**Environment:** MySQL Server 8.4.9 (Win64)
+
+**User Contexts:** `root@localhost`, `glory001@localhost`
+
+## 1. Environment & Version Verification
+
+```
+PS C:\Users\liudo> mysql --version
+C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe  Ver 8.4.9 for Win64 on x86_64 (MySQL Community Server - GPL)
+
+```
+
+## 2. Root Session: Database Creation & Access Management
+
+### Connection Establishment
+
+```
+PS C:\Users\liudo> mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.4.9 MySQL Community Server - GPL
+
+```
+
+### Initial Database Inspection
+
+```
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| lms                |
+| local_sales_db     |
+| merlin_db          |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+7 rows in set (0.03 sec)
+
+mysql> USE merlin_db;
+Database changed
+
+mysql> SHOW TABLES;
++---------------------+
+| Tables_in_merlin_db |
++---------------------+
+| userprofile         |
+| users               |
++---------------------+
+2 rows in set (0.08 sec)
+
+```
+
+### Database Initialization (`wtm_backend`)
+
+```
+mysql> CREATE DATABASE wtm_backend CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| lms                |
+| local_sales_db     |
+| merlin_db          |
+| mysql              |
+| performance_schema |
+| sys                |
+| wtm_backend        |
++--------------------+
+8 rows in set (0.01 sec)
+
+mysql> USE wtm_backend;
+Database changed
+
+```
+
+### User Creation and Privilege Granting
+
+```
+mysql> CREATE USER 'glory001'@'localhost' IDENTIFIED BY 'password01';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> GRANT ALL PRIVILEGES ON wtm_backend.* TO 'glory001'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> EXIT
+Bye
+
+```
+
+## 3. Dedicated User Verification (`glory001`)
+
+```
+PS C:\Users\liudo> mysql -u glory001 -p
+Enter password: **********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 15
+Server version: 8.4.9 MySQL Community Server - GPL
+
+```
+
+```
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| performance_schema |
+| wtm_backend        |
++--------------------+
+3 rows in set (0.00 sec)
+
+mysql> EXIT
+Bye
+
+```
+
+## 4. Root Session: Querying & Relational Joins (`merlin_db`)
+
+```
+PS C:\Users\liudo> mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 16
+Server version: 8.4.9 MySQL Community Server - GPL
+
+```
+
+```
+mysql> USE merlin_db;
+Database changed
+
+mysql> SHOW TABLES;
++---------------------+
+| Tables_in_merlin_db |
++---------------------+
+| userprofile         |
+| users               |
++---------------------+
+2 rows in set (0.01 sec)
+
+```
+
+### Table Contents Inspection
+
+#### `userprofile` Table
+
+```
+mysql> SELECT * FROM userprofile;
++-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+| id  | user_id                    | country  | city         | address                                                                 |
++-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+| 101 | stephaniesimon@hotmail.com | Malaysia | Kuala Lumpur | not as addressly as the other person                                    |
+| 104 | fancoalioma2025@tesla.com  | Cameroon | Bambali      | No.11 something street, another thing close, dash avenue, this province |
++-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+2 rows in set (0.01 sec)
+
+```
+
+#### `users` Table
+
+```
+mysql> SELECT * FROM users;
++----------------------------+-----------+-----------+----------+------------------+
+| email                      | username  | firstname | lastname | password         |
++----------------------------+-----------+-----------+----------+------------------+
+| birhane2026@gmail.com      | birhane01 | Birhane   | Telayneh | niceperson1223   |
+| fancoalioma2025@tesla.com  | franco01  | Stephanie | Simon    | alphanumeric@123 |
+| stephaniesimon@hotmail.com | simon007  | Stephanie | Simon    | alphanumeric@123 |
++----------------------------+-----------+-----------+----------+------------------+
+3 rows in set (0.01 sec)
+
+```
+
+### Inner Join Query Execution
+
+```
+mysql> SELECT * FROM users usr JOIN userprofile usp ON usr.email = usp.user_id;
++----------------------------+----------+-----------+----------+------------------+-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+| email                      | username | firstname | lastname | password         | id  | user_id                    | country  | city         | address                                                                 |
++----------------------------+----------+-----------+----------+------------------+-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+| fancoalioma2025@tesla.com  | franco01 | Stephanie | Simon    | alphanumeric@123 | 104 | fancoalioma2025@tesla.com  | Cameroon | Bambali      | No.11 something street, another thing close, dash avenue, this province |
+| stephaniesimon@hotmail.com | simon007 | Stephanie | Simon    | alphanumeric@123 | 101 | stephaniesimon@hotmail.com | Malaysia | Kuala Lumpur | not as addressly as the other person                                    |
++----------------------------+----------+-----------+----------+------------------+-----+----------------------------+----------+--------------+-------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+```
